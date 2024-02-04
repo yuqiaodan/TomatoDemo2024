@@ -3,6 +3,7 @@ package com.tomato.amelia.customviewstudy
 import com.tomato.amelia.R
 import com.tomato.amelia.base.databinding.BaseActivity
 import com.tomato.amelia.databinding.ActivityCustomViewBinding
+import com.tomato.amelia.utils.MyAppUtils
 
 /**
  * 自定义viwe步骤：
@@ -22,6 +23,12 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
     }
 
     override fun initView() {
+        binding.inputView.setNumberListener(object :InputNumberView.NumberChangeListener{
+            override fun onNumberChanged(number: Int) {
+                MyAppUtils.showToast(this@CustomViewActivity,number.toString())
+            }
+        })
+
 
     }
 }

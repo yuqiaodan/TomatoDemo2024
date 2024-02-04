@@ -11,7 +11,12 @@ import android.view.View
  * 自定义View步骤：
  * 1.判断
  */
-class MyCircleView:View{
+//kotlin 可以设置参数默认值 所以可以采用如下写法
+class MyCircleView : View {
+
+    init {
+        initView(context)
+    }
 
     constructor(context: Context?) : super(context) {
         initView(context)
