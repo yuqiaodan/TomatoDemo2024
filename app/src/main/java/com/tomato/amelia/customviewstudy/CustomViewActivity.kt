@@ -14,7 +14,6 @@ import com.tomato.amelia.databinding.ActivityCustomViewBinding
  *      a.获取相关属性 测量自身 以及child大小
  *      b.布局 摆放child
  *      c.处理用户交互事件 点击/滑动/拖动
- *
  * */
 class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
 
