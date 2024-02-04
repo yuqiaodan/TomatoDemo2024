@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="floatBodyTemp"
+            type="Float" />
+
+        <variable
+            name="floatEnvTemp"
+            type="Float" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".databinding2.TemperatureActivity">
+
+        <!--不支持-->
+        <ViewStub
+            android:id="@+id/item_not_support"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/item_body_not_support" />
+
+        <!--只有体温-->
+        <ViewStub
+            android:id="@+id/item_body_temp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/item_body_temperature"
+            app:floatBodyTemp="@{floatBodyTemp}" />
+
+        <!--体温和环境温度-->
+        <ViewStub
+            android:id="@+id/item_body_and_env_temp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/item_body_and_env_temperature"
+            app:floatBodyTemp="@{floatBodyTemp}"
+            app:floatEnvTemp="@{floatEnvTemp}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

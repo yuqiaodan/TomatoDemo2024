@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">TomatoDemo2024</string>
+
+    <string name="final_price">原价：%s</string>
+
+
+    <string name="sell_price">券后价：%s</string>
+
+
+    <string name="user_number">购买人数：%s</string>
+
+</resources>
