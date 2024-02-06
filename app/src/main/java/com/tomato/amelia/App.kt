@@ -15,8 +15,11 @@ class App:Application() {
     init {
         instance = this
     }
+
     override fun onCreate() {
         super.onCreate()
         MMKV.initialize(this)
+
+
     }
 }

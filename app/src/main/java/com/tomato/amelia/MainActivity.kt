@@ -4,12 +4,11 @@ import android.content.Intent
 import android.os.Build
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import com.tomato.amelia.base.databinding.BaseVMActivity
 import com.tomato.amelia.customviewstudy.CustomViewActivity
 import com.tomato.amelia.databinding.ActivityMainBinding
 import com.tomato.amelia.databinding1.TaobaoActivity
+import com.tomato.amelia.utils.MyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -23,7 +22,6 @@ import kotlin.math.abs
  * **/
 class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.OnClickListener {
 
-    val testLive= MutableLiveData<Int>()
 
     override fun getViewModelClass(): Class<MainViewModel> {
         return MainViewModel::class.java
@@ -35,8 +33,7 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
 
     override fun initView() {
-
-        startActivity(Intent(this,CustomViewActivity::class.java))
+        startActivity(Intent(this, CustomViewActivity::class.java))
 
         setLog(
             "brand:${Build.BRAND}\n" +
@@ -44,23 +41,35 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
         )
 
         binding.viewModel = viewModel
-        //binding.btnTest.setOnClickListener(this)
+        binding.btnTest.setOnClickListener(this)
         binding.btnDatabinding1.setOnClickListener(this)
         binding.btnDatabinding2.setOnClickListener(this)
         binding.btnCustomView.setOnClickListener(this)
-        testLive.observe(this){
-            Toast.makeText(this,it.toString(),Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onClick(v: View?) {
         when (v) {
-
             binding.btnTest -> {
 
-                testLive.value=1
+                MyUtils.dip2px(5f)
 
-
+                //A应用中唤醒部分代码逻辑
+                /*val lIntent = packageManager.getLaunchIntentForPackage("com.zyzsy.wqccc")
+                if (lIntent != null) {
+                    //inten可用来在两个APP间传递数据
+                    lIntent.putExtra("testdata", "getLaunchIntentForPackage")
+                    //setFlags看自己情况使用，也可以不调用
+                    lIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(lIntent)
+                }*/
+                //A应用唤醒部分代码逻辑
+                /*val intent2 = Intent(Intent.ACTION_MAIN)
+                */
+                /**知道要跳转应用的包命与目标Activity *//*
+                val componentName = ComponentName("com.zyzsy.wqccc", "com.idiom.pure.MainActivity")
+                intent2.setComponent(componentName)
+                intent2.putExtra("testdata", "指定activity") //这里Intent传值
+                startActivity(intent2)*/
             }
 
             binding.btnDatabinding1 -> {
@@ -69,7 +78,6 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
             binding.btnDatabinding2 -> {
                 //startActivity(Intent(this, TemperatureActivity::class.java))
-
             }
 
             binding.btnCustomView -> {
