@@ -5,7 +5,7 @@
     android:background="@drawable/selector_flow_text"
     android:text="123123131"
     android:paddingHorizontal="20dp"
-    android:textColor="@color/text_gray"
+    android:textColor="@drawable/selector_flow_text_color"
     android:paddingVertical="10dp"
     android:layout_height="wrap_content">
 </TextView>

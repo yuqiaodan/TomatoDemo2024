@@ -26,6 +26,11 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
                 MyUtils.showToast(this@CustomViewActivity,number.toString())
             }
         })
-        binding.textFlowLayout.setTextList(listOf("键盘","显示器","鼠标","春夏秋冬男装","iPad","Air Pod","Macbook Pro","耳机","男鞋","女装","忽如一夜春风来","李白","千树万树梨花开","登高杜甫","上月下月中月","寂寂无名","僧推月下门","无语柳树","切记切记冷冷清清"))
+        val flowDataList = listOf("键盘","显示器","鼠标","春夏秋冬男装","iPad","Air Pod","Macbook Pro","耳机","男鞋","女装","忽如一夜春风来","李白","千树万树梨花开","登高杜甫","上月下月中月","寂寂无名","僧推月下门","无语柳树","切记切记冷冷清清")
+        binding.textFlowLayout.setTextList(flowDataList,object:FlowLayout.ItemClickListener{
+            override fun onItemClick(text: String) {
+                MyUtils.showToast(this@CustomViewActivity,text)
+            }
+        } )
     }
 }

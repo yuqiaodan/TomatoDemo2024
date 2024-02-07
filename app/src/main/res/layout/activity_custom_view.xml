@@ -30,17 +30,10 @@
                 app:min="-30"
                 app:step="5" />
 
-
-            <FrameLayout
+            <com.tomato.amelia.customviewstudy.FlowLayout
+                android:id="@+id/text_flow_layout"
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
-
-                <com.tomato.amelia.customviewstudy.FlowLayout
-                    android:id="@+id/text_flow_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </FrameLayout>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

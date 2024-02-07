@@ -17,16 +17,20 @@ import com.tomato.amelia.utils.MyUtils
  * 自定义view 自定义ViewGroup 例子1 搜索推荐流式布局
  *
  * 自定义ViewGroup步骤：
- * 1.获取相关属性，定义相关属性
+ * 1.获取相关属性，定义相关属性 init 中实现
  * 2.添加子view，根据属性修改子view样式 (可以通过适配器，布局包裹，根据数据内部创建)
- * 3.测量孩子的宽高，测量自己
- * 4.摆放child
+ * 3.测量孩子的宽高，测量自己 onMeasure中实现
+ * 4.摆放child 布局 onLayout中实现
+ * 5.定义功能接口（需要返回的数据和动作）
+ * 6.处理事件动作和数据
  *
  * P32 3:25
  */
 class FlowLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
+    //点击监听
+    private var mItemClickListener:ItemClickListener?=null
 
     //总view集合 一个list表示一行的view
     private val mLinesView = arrayListOf<List<View>>()
@@ -102,11 +106,11 @@ class FlowLayout @JvmOverloads constructor(
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
         Log.d(
-            "CustomViewTag", "widthMode->${widthMode} widthSize->$widthSize heightMode->${heightMode} heightSize->${heightSize}\n " +
+            "CustomViewTag", "widthMode->${widthMode} widthSize->$widthSpecSize heightMode->${heightMode} heightSize->${heightSpecSize}\n " +
                     "UNSPECIFIED->${MeasureSpec.UNSPECIFIED}\n" +
                     "AT_MOST->${MeasureSpec.AT_MOST}\n" +
                     "EXACTLY->${MeasureSpec.EXACTLY}"
@@ -123,8 +127,14 @@ class FlowLayout @JvmOverloads constructor(
         var singleLine = arrayListOf<View>()
         mLinesView.add(singleLine)
         //子view全部设置为MeasureSpec.AT_MOST包裹模式
-        val childWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.AT_MOST)
-        val childHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST)
+        val childWidthSpec = MeasureSpec.makeMeasureSpec(widthSpecSize, MeasureSpec.AT_MOST)
+
+        /**
+         * 子view高度设置为不限制UNSPECIFIED
+         * 由子view自行根据内容决定高度(可以在子view中进一步限制高度 比如这里是textview 则可以限制maxline=1 或则其他条件)
+         * 这样可以实现：FlowLayout "layout_height="wrap_content" heightSpecSize=0 时 也可以实现高度根据内容变化
+         * */
+        val childHeightSpec = MeasureSpec.makeMeasureSpec(heightSpecSize, MeasureSpec.UNSPECIFIED)
         //按位置依次获取子view
         for (i in 0 until childCount) {
             val childView = getChildAt(i)
@@ -133,14 +143,12 @@ class FlowLayout @JvmOverloads constructor(
             }
             //调用measureChild测量孩子 实际也是调用子view的onMeasure方法
             measureChild(childView, childWidthSpec, childHeightSpec)
-
             Log.d("CustomViewTag", "measureChild childView ${childView.measuredWidth} ${childView.measuredHeight}")
-
             //测量完毕后 获取孩子的尺寸 判断是否可以添加到当前行
             if (singleLine.size == 0) {
                 singleLine.add(childView)
             } else {
-                if (checkChildCanBeAddToLine(singleLine, childView, widthSize)) {
+                if (checkChildCanBeAddToLine(singleLine, childView, widthSpecSize)) {
                     singleLine.add(childView)
                 } else {
                     singleLine = arrayListOf<View>()
@@ -153,13 +161,12 @@ class FlowLayout @JvmOverloads constructor(
         /**
          * 测量自己
          * 宽度直接占满父布局 不关心Mode
-         * 高度根据子view的行数和单个子view的高度动态计算
+         * 高度根据子view的行数和单个子view的高度动态计算 加上竖向间隔
          * */
         val lines = mLinesView.size
-        val height = getChildAt(0).measuredHeight * lines
-
-        Log.d("CustomViewTag", "onMeasure widthSize = $widthSize , height = $height  ,${lines} ${getChildAt(0).measuredHeight}")
-        setMeasuredDimension(widthSize, height)
+        val height = getChildAt(0).measuredHeight * lines + (lines - 1) * mItemVerticalMargin
+        Log.d("CustomViewTag", "onMeasure widthSize = $widthSpecSize , height = $height  ,${lines} ${getChildAt(0).measuredHeight}")
+        setMeasuredDimension(widthSpecSize, height.toInt())
     }
 
     /**
@@ -187,9 +194,6 @@ class FlowLayout @JvmOverloads constructor(
             currentTop += lineHeight + mItemVerticalMargin.toInt()
         }
 
-
-
-
         Log.d("CustomViewTag", "onLayout")
         val child = getChildAt(0)
         child.layout(0, 0, child.measuredWidth, child.measuredHeight)
@@ -199,7 +203,8 @@ class FlowLayout @JvmOverloads constructor(
     /**
      * 设置数据 根据数据创建子view并且添加到ViewCroup
      * */
-    fun setTextList(list: List<String>) {
+    fun setTextList(list: List<String>,itemClickListener:ItemClickListener?=null) {
+        mItemClickListener = itemClickListener
         mData.clear()
         mData.addAll(list)
         setUpChildren()
@@ -211,6 +216,9 @@ class FlowLayout @JvmOverloads constructor(
         //添加子view
         mData.forEach { text ->
             val itemBinding = ItemFlowLayoutBinding.inflate(LayoutInflater.from(context), this, true)
+            itemBinding.tvText.setOnClickListener {
+                mItemClickListener?.onItemClick(text)
+            }
             itemBinding.tvText.text = text
         }
     }
@@ -226,10 +234,17 @@ class FlowLayout @JvmOverloads constructor(
         line.forEach {
             totalWidth += it.measuredWidth
         }
-        //如何行长度加上即将添加进来的view长度 超出限制宽度则不可以添加 否则可以添加
-        //注意计算上横向间隔宽度
+        /***
+         * 如何行长度加上即将添加进来的view长度 超出限制宽度则不可以添加 否则可以添加
+         * 注意计算上横向间隔宽度
+         * **/
         return totalWidth + child.measuredWidth + line.size * mItemHorizontalMargin <= parentWidthSize
     }
 
+
+
+    interface  ItemClickListener {
+        fun onItemClick(text: String)
+    }
 
 }
