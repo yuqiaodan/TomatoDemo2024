@@ -32,6 +32,7 @@
 
             <com.tomato.amelia.customviewstudy.FlowLayout
                 android:id="@+id/text_flow_layout"
+                android:padding="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

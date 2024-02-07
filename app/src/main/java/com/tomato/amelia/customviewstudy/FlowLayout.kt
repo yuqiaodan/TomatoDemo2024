@@ -30,7 +30,7 @@ class FlowLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     //点击监听
-    private var mItemClickListener:ItemClickListener?=null
+    private var mItemClickListener: ItemClickListener? = null
 
     //总view集合 一个list表示一行的view
     private val mLinesView = arrayListOf<List<View>>()
@@ -164,7 +164,7 @@ class FlowLayout @JvmOverloads constructor(
          * 高度根据子view的行数和单个子view的高度动态计算 加上竖向间隔
          * */
         val lines = mLinesView.size
-        val height = getChildAt(0).measuredHeight * lines + (lines - 1) * mItemVerticalMargin
+        val height = getChildAt(0).measuredHeight * lines + (lines - 1) * mItemVerticalMargin + paddingTop + paddingBottom
         Log.d("CustomViewTag", "onMeasure widthSize = $widthSpecSize , height = $height  ,${lines} ${getChildAt(0).measuredHeight}")
         setMeasuredDimension(widthSpecSize, height.toInt())
     }
@@ -174,36 +174,30 @@ class FlowLayout @JvmOverloads constructor(
      * 摆放子view
      * */
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-
-        var currentLeft = 0
-        var currentTop = 0
-
+        Log.d("CustomViewTag", "onLayout")
+        var currentLeft = paddingLeft
+        var currentTop = paddingTop
         mLinesView.forEach { singleLine ->
             var lineHeight = 0
             singleLine.forEach { child ->
                 val childWidth = child.measuredWidth
-
                 val childHeight = child.measuredHeight
                 lineHeight = childHeight
-
                 //调用child.layout设置位置 分别设置l 、 r 、 t 、  b
                 child.layout(currentLeft, currentTop, currentLeft + childWidth, currentTop + childHeight)
                 currentLeft = child.right + mItemHorizontalMargin.toInt()
             }
-            currentLeft = 0
+            currentLeft = paddingLeft
             currentTop += lineHeight + mItemVerticalMargin.toInt()
         }
 
-        Log.d("CustomViewTag", "onLayout")
-        val child = getChildAt(0)
-        child.layout(0, 0, child.measuredWidth, child.measuredHeight)
     }
 
 
     /**
      * 设置数据 根据数据创建子view并且添加到ViewCroup
      * */
-    fun setTextList(list: List<String>,itemClickListener:ItemClickListener?=null) {
+    fun setTextList(list: List<String>, itemClickListener: ItemClickListener? = null) {
         mItemClickListener = itemClickListener
         mData.clear()
         mData.addAll(list)
@@ -238,12 +232,11 @@ class FlowLayout @JvmOverloads constructor(
          * 如何行长度加上即将添加进来的view长度 超出限制宽度则不可以添加 否则可以添加
          * 注意计算上横向间隔宽度
          * **/
-        return totalWidth + child.measuredWidth + line.size * mItemHorizontalMargin <= parentWidthSize
+        return totalWidth + child.measuredWidth + line.size * mItemHorizontalMargin + paddingStart + paddingEnd <= parentWidthSize
     }
 
 
-
-    interface  ItemClickListener {
+    interface ItemClickListener {
         fun onItemClick(text: String)
     }
 
