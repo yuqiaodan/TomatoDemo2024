@@ -4,12 +4,19 @@
     <color name="white">#FFFFFFFF</color>
 
 
-
-
     <color name="pink">#FFC0CB</color>
     <color name="deep_pink">#FF1493</color>
-
     <color name="orange">#FF6600</color>
-
     <color name="text_gray">#888585</color>
+    <color name="deep_gary">#3C3C3C</color>
+
+
+
+
+    <color name="keypad_orange">#E07A5F</color>
+    <color name="keypad_green">#81B29A</color>
+    <color name="keypad_white">#F4F1DE</color>
+    <color name="keypad_gray">#3D405B</color>
+
+
 </resources>

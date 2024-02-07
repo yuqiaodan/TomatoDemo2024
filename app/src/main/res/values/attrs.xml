@@ -19,5 +19,12 @@
         <attr name="borderColor" format="color"/>
         <attr name="borderRadius" format="dimension"/>
     </declare-styleable>
+    
+    <declare-styleable name="KeypadView">
+        <attr name="numberColor" format="color"/>
+        <attr name="numberSize" format="dimension"/>
+        <attr name="itemPressColor" format="color"/>
+        <attr name="itemNormalColor" format="color"/>
+    </declare-styleable>
 
 </resources>

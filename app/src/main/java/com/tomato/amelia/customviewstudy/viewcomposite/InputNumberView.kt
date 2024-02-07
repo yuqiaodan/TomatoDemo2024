@@ -1,4 +1,4 @@
-package com.tomato.amelia.customviewstudy
+package com.tomato.amelia.customviewstudy.viewcomposite
 
 import android.content.Context
 import android.util.AttributeSet
@@ -11,7 +11,7 @@ import com.tomato.amelia.databinding.LayoutViewInputNumberBinding
 /**
  * author: created by tomato on 2024/1/17 11:22
  * description:
- * 自定义view 自定义组合view 例子1 数字输入button
+ * 自定义组合view 例子1 数字输入button
  *
  * 自定义组合view步骤：
  * 1.获取相关属性，定义相关属性
@@ -29,7 +29,7 @@ class InputNumberView @JvmOverloads constructor(
 
     private var mCurrentNumber = 0
 
-    private var numberChangeListener :NumberChangeListener?=null
+    private var numberChangeListener : NumberChangeListener?=null
 
     var mDefaultValue = 0
     var mMax = 0
@@ -56,7 +56,7 @@ class InputNumberView @JvmOverloads constructor(
         mStep = type.getInt(R.styleable.InputNumberView_step, 1)
         mDisable = type.getBoolean(R.styleable.InputNumberView_disable, false)
         mBtnBackground = type.getResourceId(R.styleable.InputNumberView_btnBackground, -1)
-        Log.d("CustomViewTag", "InputNumberView mDefaultValue:$mDefaultValue mMax:$mMax mMin:$mMin mStep:$mStep mDisable:$mDisable mBtnBackground:$mBtnBackground")
+        Log.d("InputNumberViewTag", "InputNumberView mDefaultValue:$mDefaultValue mMax:$mMax mMin:$mMin mStep:$mStep mDisable:$mDisable mBtnBackground:$mBtnBackground")
         //TypedArray一定要回收
         type.recycle()
     }

@@ -18,7 +18,7 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <com.tomato.amelia.customviewstudy.InputNumberView
+            <com.tomato.amelia.customviewstudy.viewcomposite.InputNumberView
                 android:id="@+id/input_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -30,11 +30,20 @@
                 app:min="-30"
                 app:step="5" />
 
-            <com.tomato.amelia.customviewstudy.FlowLayout
+            <com.tomato.amelia.customviewstudy.viewgroup.FlowLayout
                 android:id="@+id/text_flow_layout"
-                android:padding="30dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                app:itemVerticalMargin="10dp"
+                app:itemHorizontalMargin="10dp"
+                android:layout_height="wrap_content"
+                android:padding="10dp" />
+
+
+            <com.tomato.amelia.customviewstudy.viewgroup.KeypadView
+                android:id="@+id/key_pad"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:numberSize="16sp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,4 +1,4 @@
-package com.tomato.amelia.customviewstudy
+package com.tomato.amelia.customviewstudy.viewgroup
 
 import android.content.Context
 import android.util.AttributeSet
@@ -14,17 +14,16 @@ import com.tomato.amelia.utils.MyUtils
 /**
  * author: created by tomato on 2024/2/6 14:06
  * description:
- * 自定义view 自定义ViewGroup 例子1 搜索推荐流式布局
+ * 自定义ViewGroup 例子1 搜索推荐流式布局
  *
  * 自定义ViewGroup步骤：
  * 1.获取相关属性，定义相关属性 init 中实现
- * 2.添加子view，根据属性修改子view样式 (可以通过适配器，布局包裹，根据数据内部创建)
- * 3.测量孩子的宽高，测量自己 onMeasure中实现
+ * 2.添加子view，根据属性修改子view样式 (可以根据数据内部创建、通过适配器、布局包裹)
+ * 3.先测量孩子的宽高，再根据孩子的数据测量自己 onMeasure中实现
  * 4.摆放child 布局 onLayout中实现
  * 5.定义功能接口（需要返回的数据和动作）
  * 6.处理事件动作和数据
  *
- * P32 3:25
  */
 class FlowLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -62,7 +61,7 @@ class FlowLayout @JvmOverloads constructor(
     private val mBorderRadius: Float
 
     init {
-        //第一步 获取相关属性，定义相关属性
+        /**第一步 获取相关属性，定义相关属性**/
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout)
         mMaxLine = typeArray.getInt(R.styleable.FlowLayout_maxLine, 3)
         mItemHorizontalMargin = typeArray.getDimension(R.styleable.FlowLayout_itemHorizontalMargin, MyUtils.dip2px(5f))
@@ -72,7 +71,7 @@ class FlowLayout @JvmOverloads constructor(
         mBorderColor = typeArray.getColor(R.styleable.FlowLayout_borderColor, resources.getColor(R.color.text_gray))
         mBorderRadius = typeArray.getDimension(R.styleable.FlowLayout_borderRadius, MyUtils.dip2px(5f))
         Log.d(
-            "CustomViewTag", "FlowLayout\n" +
+            "FlowLayoutTag", "FlowLayout\n" +
                     "maxLine:$mMaxLine\n" +
                     "itemHorizontalMargin:$mItemHorizontalMargin\n" +
                     "itemVerticalMargin:$mItemVerticalMargin\n" +
@@ -84,8 +83,25 @@ class FlowLayout @JvmOverloads constructor(
         typeArray.recycle()
     }
 
+    /**第二步 添加子view**/
+    private fun setUpChildren() {
+        //清空所有原view
+        removeAllViews()
+        //添加子view
+        mData.forEach { text ->
+            //在这里可以通过动态创建drawable来实现mTextColor、mBorderColor、mBorderRadius等属性
+            val itemBinding = ItemFlowLayoutBinding.inflate(LayoutInflater.from(context), this, true)
+            itemBinding.tvText.setOnClickListener {
+                /**第六步 处理事件**/
+                mItemClickListener?.onItemClick(text)
+            }
+            itemBinding.tvText.text = text
+        }
+    }
+
 
     /**
+     * 第三步 测量
      * 覆写onMeasure进行测量步骤
      * 这两个参数来自于父布局 起包含了值和模式(测量规范模式)
      * @param widthMeasureSpec 期望宽度 包含期望宽度size(px)和测量标准模式mode
@@ -102,7 +118,7 @@ class FlowLayout @JvmOverloads constructor(
      * */
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        Log.d("CustomViewTag", "onMeasure")
+        Log.d("FlowLayoutTag", "onMeasure")
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
@@ -110,7 +126,7 @@ class FlowLayout @JvmOverloads constructor(
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
         Log.d(
-            "CustomViewTag", "widthMode->${widthMode} widthSize->$widthSpecSize heightMode->${heightMode} heightSize->${heightSpecSize}\n " +
+            "FlowLayoutTag", "widthMode->${widthMode} widthSize->$widthSpecSize heightMode->${heightMode} heightSize->${heightSpecSize}\n " +
                     "UNSPECIFIED->${MeasureSpec.UNSPECIFIED}\n" +
                     "AT_MOST->${MeasureSpec.AT_MOST}\n" +
                     "EXACTLY->${MeasureSpec.EXACTLY}"
@@ -128,7 +144,6 @@ class FlowLayout @JvmOverloads constructor(
         mLinesView.add(singleLine)
         //子view全部设置为MeasureSpec.AT_MOST包裹模式
         val childWidthSpec = MeasureSpec.makeMeasureSpec(widthSpecSize, MeasureSpec.AT_MOST)
-
         /**
          * 子view高度设置为不限制UNSPECIFIED
          * 由子view自行根据内容决定高度(可以在子view中进一步限制高度 比如这里是textview 则可以限制maxline=1 或则其他条件)
@@ -143,7 +158,6 @@ class FlowLayout @JvmOverloads constructor(
             }
             //调用measureChild测量孩子 实际也是调用子view的onMeasure方法
             measureChild(childView, childWidthSpec, childHeightSpec)
-            Log.d("CustomViewTag", "measureChild childView ${childView.measuredWidth} ${childView.measuredHeight}")
             //测量完毕后 获取孩子的尺寸 判断是否可以添加到当前行
             if (singleLine.size == 0) {
                 singleLine.add(childView)
@@ -165,16 +179,17 @@ class FlowLayout @JvmOverloads constructor(
          * */
         val lines = mLinesView.size
         val height = getChildAt(0).measuredHeight * lines + (lines - 1) * mItemVerticalMargin + paddingTop + paddingBottom
-        Log.d("CustomViewTag", "onMeasure widthSize = $widthSpecSize , height = $height  ,${lines} ${getChildAt(0).measuredHeight}")
+        Log.d("FlowLayoutTag", "onMeasure widthSize = $widthSpecSize , height = $height  ,${lines} ${getChildAt(0).measuredHeight}")
         setMeasuredDimension(widthSpecSize, height.toInt())
     }
 
     /**
+     * 第四步摆放
      * ViewGroup强制实现
      * 摆放子view
      * */
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        Log.d("CustomViewTag", "onLayout")
+        Log.d("FlowLayoutTag", "onLayout")
         var currentLeft = paddingLeft
         var currentTop = paddingTop
         mLinesView.forEach { singleLine ->
@@ -204,19 +219,6 @@ class FlowLayout @JvmOverloads constructor(
         setUpChildren()
     }
 
-    private fun setUpChildren() {
-        //清空所有原view
-        removeAllViews()
-        //添加子view
-        mData.forEach { text ->
-            val itemBinding = ItemFlowLayoutBinding.inflate(LayoutInflater.from(context), this, true)
-            itemBinding.tvText.setOnClickListener {
-                mItemClickListener?.onItemClick(text)
-            }
-            itemBinding.tvText.text = text
-        }
-    }
-
     /**
      * 判断view是否可以添加到当前行
      * @param line 当前行已添加的view
@@ -236,6 +238,7 @@ class FlowLayout @JvmOverloads constructor(
     }
 
 
+    /**第五步 定义功能接口**/
     interface ItemClickListener {
         fun onItemClick(text: String)
     }
