@@ -92,6 +92,7 @@ class KeypadView @JvmOverloads constructor(
             if (i == 10) {
                 //标记一下 为删除按钮
                 item.tag = true
+                item.text = "X"
             } else {
                 item.tag = i
                 //内容
@@ -196,24 +197,60 @@ class KeypadView @JvmOverloads constructor(
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec)
     }
 
-    /***第四步 摆放**/
+    /***第四步 摆放
+     * 摆放这一步其实比较考验数学思维
+     * 最好按自己的想法和思路实现
+     * 总会实现出来的 只是过程繁琐和简洁的区别
+     * 实在不行用笨方法 一个个摆放都可以 Map<Int,View> 挨个寻找view 一个个对齐
+     * **/
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        //排列还是得改一下 摆放规则不对 用笨方法一个个摆放都可以 Map<Int,View> 挨个寻找view 一个个对齐
-        val currentLeft = 0
         for (i in 0 until childCount) {
-            //计算item的行列
-            //item的行数
-            val rowIndex = i / mColumn
-            //item的列数
-            val columnIndex = i % mColumn
-
             val item = getChildAt(i)
+            val mTag = item.tag
+            if (mTag == true) {
+                val iTop = item.measuredHeight * 3
+                //左：父布局宽度 除以3
+                val iLeft = measuredWidth / 3
+                val iRight = iLeft + item.measuredWidth
+                val iBottom = item.measuredHeight * 4
+                item.layout(iLeft, iTop, iRight, iBottom)
+            } else {
+                when (mTag) {
+                    7, 8, 9 -> {
+                        val iTop = 0
+                        val iLeft = (mTag.toString().toInt() - 7) * item.measuredWidth
+                        val iRight = (mTag.toString().toInt() - 7 + 1) * item.measuredWidth
+                        val iBottom = item.measuredHeight
+                        item.layout(iLeft, iTop, iRight, iBottom)
+                    }
 
-            val left = columnIndex * item.measuredWidth
-            val right = left + item.measuredWidth
-            val top = rowIndex * item.measuredHeight
-            val bottom = top + item.measuredHeight
-            item.layout(left, top, right, bottom)
+                    4, 5, 6 -> {
+                        val iTop = item.measuredHeight
+                        val iLeft = (mTag.toString().toInt() - 4) * item.measuredWidth
+                        val iRight = (mTag.toString().toInt() - 4 + 1) * item.measuredWidth
+                        val iBottom = item.measuredHeight * 2
+                        item.layout(iLeft, iTop, iRight, iBottom)
+
+                    }
+
+                    1, 2, 3 -> {
+                        val iTop = item.measuredHeight * 2
+                        val iLeft = (mTag.toString().toInt() - 1) * item.measuredWidth
+                        val iRight = (mTag.toString().toInt() - 1 + 1) * item.measuredWidth
+                        val iBottom = item.measuredHeight * 3
+                        item.layout(iLeft, iTop, iRight, iBottom)
+                    }
+
+                    0 -> {
+                        val iTop = item.measuredHeight * 3
+                        val iLeft = 0
+                        val iRight = item.measuredWidth
+                        val iBottom = item.measuredHeight * 4
+                        item.layout(iLeft, iTop, iRight, iBottom)
+                    }
+                }
+            }
+
         }
 
 
