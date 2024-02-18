@@ -13,10 +13,29 @@
         tools:context=".customviewstudy.CustomViewActivity">
 
         <LinearLayout
+            android:id="@+id/ll_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical">
+
+            <com.tomato.amelia.customviewstudy.viewgroup.SlideMenu
+                android:id="@+id/slide_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:slideFunction="delete|read">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@color/keypad_gray"
+                    android:gravity="center"
+                    android:text="侧滑测试"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+            </com.tomato.amelia.customviewstudy.viewgroup.SlideMenu>
 
             <com.tomato.amelia.customviewstudy.viewcomposite.InputNumberView
                 android:id="@+id/input_view"
@@ -33,17 +52,17 @@
             <com.tomato.amelia.customviewstudy.viewgroup.FlowLayout
                 android:id="@+id/text_flow_layout"
                 android:layout_width="match_parent"
-                app:itemVerticalMargin="10dp"
-                app:itemHorizontalMargin="10dp"
                 android:layout_height="wrap_content"
-                android:padding="10dp" />
+                android:padding="10dp"
+                app:itemHorizontalMargin="10dp"
+                app:itemVerticalMargin="10dp" />
 
 
             <com.tomato.amelia.customviewstudy.viewgroup.KeypadView
                 android:id="@+id/key_pad"
                 android:layout_width="match_parent"
-                android:layout_margin="10dp"
                 android:layout_height="300dp"
+                android:layout_margin="10dp"
                 app:numberSize="16sp" />
 
         </LinearLayout>

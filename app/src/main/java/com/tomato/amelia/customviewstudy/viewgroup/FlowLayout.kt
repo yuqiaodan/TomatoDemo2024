@@ -96,6 +96,7 @@ class FlowLayout @JvmOverloads constructor(
                 mItemClickListener?.onItemClick(text)
             }
             itemBinding.tvText.text = text
+            Log.d("FlowLayout", "item Width:${itemBinding.root.layoutParams.width} Height:${itemBinding.root.layoutParams.height}")
         }
     }
 
@@ -144,6 +145,7 @@ class FlowLayout @JvmOverloads constructor(
         mLinesView.add(singleLine)
         //子view全部设置为MeasureSpec.AT_MOST包裹模式
         val childWidthSpec = MeasureSpec.makeMeasureSpec(widthSpecSize, MeasureSpec.AT_MOST)
+
         /**
          * 子view高度设置为不限制UNSPECIFIED
          * 由子view自行根据内容决定高度(可以在子view中进一步限制高度 比如这里是textview 则可以限制maxline=1 或则其他条件)

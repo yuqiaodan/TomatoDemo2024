@@ -27,4 +27,13 @@
         <attr name="itemNormalColor" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="SlideMenu">
+        <attr name="slideFunction" format="flags">
+            <flag name="delete" value="1"/>
+            <flag name="read" value="2"/>
+            <flag name="top" value="3"/>
+        </attr>
+
+    </declare-styleable>
+
 </resources>

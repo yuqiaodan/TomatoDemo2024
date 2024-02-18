@@ -1,9 +1,17 @@
 package com.tomato.amelia.customviewstudy
 
+import android.graphics.Color
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.View.MeasureSpec
+import android.widget.TextView
 import com.tomato.amelia.R
 import com.tomato.amelia.base.databinding.BaseActivity
 import com.tomato.amelia.customviewstudy.viewcomposite.InputNumberView
 import com.tomato.amelia.customviewstudy.viewgroup.FlowLayout
+import com.tomato.amelia.customviewstudy.viewgroup.KeypadView
+import com.tomato.amelia.customviewstudy.viewgroup.SlideMenu
 import com.tomato.amelia.databinding.ActivityCustomViewBinding
 import com.tomato.amelia.utils.MyUtils
 
@@ -25,12 +33,26 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
 
     override fun initView() {
 
+        binding.slideView.setActionListener(object : SlideMenu.OnActionClickListener {
+            override fun onDelete() {
+                MyUtils.showToast(this@CustomViewActivity, "onDelete")
+            }
+
+            override fun onTop() {
+                MyUtils.showToast(this@CustomViewActivity, "onTop")
+            }
+
+            override fun onRead() {
+                MyUtils.showToast(this@CustomViewActivity, "onRead")
+            }
+        })
+
+
         binding.inputView.setNumberListener(object : InputNumberView.NumberChangeListener {
             override fun onNumberChanged(number: Int) {
                 MyUtils.showToast(this@CustomViewActivity, number.toString())
             }
         })
-
 
         val flowDataList = listOf(
             "键盘",
@@ -59,8 +81,54 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
             }
         })
 
+        binding.keyPad.setKeypadListener(object : KeypadView.KeypadListener {
+            override fun onClickNumber(num: Int) {
+                MyUtils.showToast(this@CustomViewActivity, num.toString())
+            }
+
+            override fun onDelete() {
+                MyUtils.showToast(this@CustomViewActivity, "Delete")
+            }
+        })
+
+        testViewWidth()
+
+    }
 
 
+    /**
+     * view.measuredWidth
+     * 是布局测量阶段计算的宽度，用作后续布局决策的依据，但最终的宽度可能会在布局阶段调整。
+     *
+     * view.layoutParams.width 是 View  （在View添加到父布局之前 此值为null）
+     * 在布局前由外部指定的期望宽度，它告诉布局管理器如何处理这个 View 的宽度。布局的实际结果需要结合 view.width 和 view.measuredWidth 来最终确定。
+     *
+     * view.width
+     * 是最终在屏幕上显示的实际宽度，包括 View 的内容加上填充。
+     * */
+    fun testViewWidth() {
+
+        val textView = TextView(this)
+        textView.text = "测试"
+        textView.setBackgroundResource(R.color.black)
+        textView.setTextColor(Color.parseColor("#FFFFFF"))
+        textView.gravity = Gravity.CENTER
+        log(textView)
+        textView.measure(MeasureSpec.makeMeasureSpec(100, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(100, MeasureSpec.AT_MOST))
+        log(textView)
+        textView.layout(0, 0, textView.measuredWidth, textView.measuredHeight)
+        log(textView)
+        binding.llContent.addView(textView)
+        log(textView)
+
+    }
+
+    fun log(view: View) {
+        Log.d(
+            "TextParams", "\nwidth:${view.width} height:${view.height}" +
+                    "\nmeasuredWidth:${view.measuredWidth} measuredHeight:${view.measuredHeight}" +
+                    "\nlayoutParams width:${view.layoutParams?.width} layoutParams height:${view.layoutParams?.height}"
+        )
 
     }
 }

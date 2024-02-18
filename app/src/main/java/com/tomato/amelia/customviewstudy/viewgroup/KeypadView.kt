@@ -40,8 +40,9 @@ class KeypadView @JvmOverloads constructor(
     private val mColumn = DEFAULT_COLUMN_COUNT
     private val mRow = DEFAULT_ROW_COUNT
 
+
     //item之间的距离
-    private val itemMargin = MyUtils.dip2px(5f)
+    private val itemMargin = MyUtils.dip2px(3f)
 
 
     //数字文案颜色
@@ -141,11 +142,14 @@ class KeypadView @JvmOverloads constructor(
             item.background = bg
 
             item.setOnClickListener {
-
-                Log.d("KeypadView", "item Click")
-
+                if (it.tag == true) {
+                    mKeypadListener?.onDelete()
+                } else {
+                    mKeypadListener?.onClickNumber(i)
+                }
             }
             addView(item)
+            Log.d("KeypadView", "item Width:${item.layoutParams?.width} Height:${item.layoutParams?.height}")
         }
 
     }
@@ -252,8 +256,19 @@ class KeypadView @JvmOverloads constructor(
             }
 
         }
+    }
 
 
+    private var mKeypadListener: KeypadListener? = null
+    fun setKeypadListener(listener: KeypadListener) {
+        this.mKeypadListener = listener
+    }
+
+    interface KeypadListener {
+
+        fun onClickNumber(num: Int)
+
+        fun onDelete()
     }
 
 

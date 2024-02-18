@@ -12,11 +12,11 @@
 
 
 
-
     <color name="keypad_orange">#E07A5F</color>
     <color name="keypad_green">#81B29A</color>
     <color name="keypad_white">#F4F1DE</color>
     <color name="keypad_gray">#3D405B</color>
 
+    <color name="delete_red">#E74C3C</color>
 
 </resources>

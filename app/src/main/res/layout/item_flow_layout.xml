@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
     android:id="@+id/tv_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@drawable/selector_flow_text"
-    android:text="123123131"
-    android:paddingHorizontal="20dp"
-    android:maxLines="1"
     android:ellipsize="end"
-    android:textColor="@drawable/selector_flow_text_color"
+    android:maxLines="1"
+    android:paddingHorizontal="20dp"
     android:paddingVertical="10dp"
-    android:layout_height="wrap_content">
-</TextView>
+    android:text="123123131"
+    android:textColor="@drawable/selector_flow_text_color"/>
