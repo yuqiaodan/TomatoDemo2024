@@ -16,6 +16,16 @@ import kotlin.math.absoluteValue
 /**
  * author: created by tomato on 2024/2/18 14:43
  * description:
+ * 自定义ViewGroup 例子3 仿QQ聊天item侧滑菜单
+ *
+ * 自定义ViewGroup步骤：
+ * 1.获取相关属性，定义相关属性 init 中实现
+ * 2.添加子view，根据属性修改子view样式 (可以根据数据内部创建、通过适配器、布局包裹)
+ * 3.先测量孩子的宽高，再根据孩子的数据测量自己 onMeasure中实现
+ * 4.摆放child 布局 onLayout中实现
+ * 5.定义功能接口（需要返回的数据和动作）
+ * 6.处理事件动作和数据
+ *
  */
 class SlideMenu @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0

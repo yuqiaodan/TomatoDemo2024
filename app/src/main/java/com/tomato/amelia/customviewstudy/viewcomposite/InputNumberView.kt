@@ -15,10 +15,9 @@ import com.tomato.amelia.databinding.LayoutViewInputNumberBinding
  *
  * 自定义组合view步骤：
  * 1.获取相关属性，定义相关属性
- * 2.加载组合view，根据属性绘制ui
- * 3.
- *
- *
+ * 2.加载组合view
+ * 3.定义功能接口
+ * 4.处理事件
  *
  */
 class InputNumberView @JvmOverloads constructor(

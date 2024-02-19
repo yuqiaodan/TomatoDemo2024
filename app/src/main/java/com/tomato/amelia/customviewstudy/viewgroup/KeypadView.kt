@@ -18,6 +18,8 @@ import com.tomato.amelia.utils.MyUtils
  * author: created by tomato on 2024/2/7 14:06
  * description:
  * 自定义ViewGroup 例子2 键盘样式布局
+ *
+ * 自定义ViewGroup步骤：
  * 1.获取相关属性，定义相关属性 init 中实现
  * 2.添加子view，根据属性修改子view样式 (可以根据数据内部创建、通过适配器、布局包裹)
  * 3.先测量孩子的宽高，再根据孩子的数据测量自己 onMeasure中实现

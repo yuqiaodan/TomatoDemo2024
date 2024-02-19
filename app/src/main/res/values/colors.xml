@@ -19,4 +19,11 @@
 
     <color name="delete_red">#E74C3C</color>
 
+
+    <color name="watch_yellow">#FFC300</color>
+    <color name="watch_black">#303960</color>
+    <color name="watch_red">#F64E60</color>
+    <color name="watch_blue">#61C0BF</color>
+
+
 </resources>

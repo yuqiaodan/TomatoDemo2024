@@ -33,18 +33,24 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
 
     override fun initView() {
-        startActivity(Intent(this, CustomViewActivity::class.java))
+        jumpToCustom()
 
         setLog(
             "brand:${Build.BRAND}\n" +
                     "os_ver:${Build.VERSION.RELEASE}\n"
         )
-
         binding.viewModel = viewModel
         binding.btnTest.setOnClickListener(this)
         binding.btnDatabinding1.setOnClickListener(this)
         binding.btnDatabinding2.setOnClickListener(this)
         binding.btnCustomView.setOnClickListener(this)
+    }
+
+    private fun jumpToCustom() {
+        val mIntent = Intent()
+        mIntent.setClassName(this, CustomViewActivity::class.java.name)
+        setLog("start: ${CustomViewActivity::class.java.name}")
+        startActivity(mIntent)
     }
 
     override fun onClick(v: View?) {
