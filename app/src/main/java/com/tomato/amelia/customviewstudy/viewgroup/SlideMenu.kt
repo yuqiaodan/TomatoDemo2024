@@ -98,12 +98,15 @@ class SlideMenu @JvmOverloads constructor(
         /***第六步 处理事件**/
         menuLayoutBinding.tvDelete.setOnClickListener {
             mActionListener?.onDelete()
+            scrollToSmooth(0, 0, 200)
         }
         menuLayoutBinding.tvRead.setOnClickListener {
             mActionListener?.onRead()
+            scrollToSmooth(0, 0, 200)
         }
         menuLayoutBinding.tvTop.setOnClickListener {
             mActionListener?.onTop()
+            scrollToSmooth(0, 0, 200)
         }
         Log.d("SlideMenu", "childCount:${childCount} ${menuLayoutBinding.root.layoutParams?.height}")
     }
