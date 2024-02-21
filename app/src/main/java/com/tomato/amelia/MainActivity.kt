@@ -57,17 +57,16 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
         when (v) {
             binding.btnTest -> {
 
-                MyUtils.dip2px(5f)
-
                 //A应用中唤醒部分代码逻辑
-                /*val lIntent = packageManager.getLaunchIntentForPackage("com.zyzsy.wqccc")
+                val lIntent = packageManager.getLaunchIntentForPackage("cn.rush.saves.battery")
                 if (lIntent != null) {
                     //inten可用来在两个APP间传递数据
-                    lIntent.putExtra("testdata", "getLaunchIntentForPackage")
+                    lIntent.putExtra("testdata", "TomatoDemo2024拉起")
                     //setFlags看自己情况使用，也可以不调用
                     lIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(lIntent)
-                }*/
+                }
+
                 //A应用唤醒部分代码逻辑
                 /*val intent2 = Intent(Intent.ACTION_MAIN)
                 */

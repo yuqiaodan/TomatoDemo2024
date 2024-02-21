@@ -23,6 +23,7 @@
                 android:id="@+id/watch_face"
                 android:layout_marginTop="20dp"
                 android:layout_width="250dp"
+                app:faceBg="@mipmap/bg_watcher_face"
                 android:layout_height="wrap_content"
               />
 
