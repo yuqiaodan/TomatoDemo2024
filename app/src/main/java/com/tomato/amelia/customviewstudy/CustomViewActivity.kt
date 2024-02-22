@@ -138,7 +138,6 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
     }
 
     fun playProgressAnim(progressBar:PopCircleProgress){
-
         val anim = ValueAnimator.ofInt(0, progressBar.getMaxProgress())
         anim.interpolator = LinearInterpolator()
         anim.addUpdateListener {
@@ -148,8 +147,5 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
         anim.duration = 5 * 1000L
         anim.repeatCount = ValueAnimator.INFINITE
         anim.start()
-
-
-
     }
 }
