@@ -29,6 +29,8 @@ import kotlin.math.sin
  * 想象为准备n支不同颜色的笔 绘制不同部分。或者准备一支笔，绘制不同部分前确定其颜色。
  * 画笔有很多属性除了颜色外，还有抗锯齿等等设置，笔尖宽度等内容
  * 4.绘制View内容
+ * 5.添加功能接口
+ * 6.处理事件
  *
  */
 class WatchFaceView @JvmOverloads constructor(
@@ -80,7 +82,6 @@ class WatchFaceView @JvmOverloads constructor(
         mScaleColor = typeArray.getColor(R.styleable.WatchFaceView_scaleColor, context.getColor(R.color.white))
         mFaceBgId = typeArray.getResourceId(R.styleable.WatchFaceView_faceBg, -1)
         mScaleShow = typeArray.getBoolean(R.styleable.WatchFaceView_scaleShow, true)
-
 
         //读取背景Bitmap
         if (mFaceBgId != -1) {
