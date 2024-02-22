@@ -341,6 +341,7 @@ class WatchFaceView @JvmOverloads constructor(
 
         //绘制秒针 先保存当前画布状态
         canvas.save()
+
         //计算秒针旋转角度 一圈总共360度  秒针角度= 360 * (second / 60f)
         val secondDegrees = 360 * (second / 60f)
         //根据角度 旋转画布坐标系 准备在x轴上画出秒针 由于X轴默认 水平从左到右 但秒为0时 秒针应该为竖直向上 偏移角度为90度 所以减去
@@ -363,7 +364,6 @@ class WatchFaceView @JvmOverloads constructor(
         canvas.rotate(hourDegrees - 90, 0f, 0f)
         canvas.drawLine(0f, 0f, width / 2 * 0.3f, 0f, mHourPaint)
         canvas.restore()
-
 
         //恢复到画布之前保存的状态 坐标（0，0）恢复到左上角
         canvas.restore()

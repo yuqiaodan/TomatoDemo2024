@@ -36,7 +36,7 @@ class PopCircleProgress @JvmOverloads constructor(
     private var mProgress: Int
 
     //最大进度
-    private val mMaxProgress: Int
+    private var mMaxProgress: Int
 
     //进度条宽度
     private val mProgressWidth: Float
@@ -62,6 +62,9 @@ class PopCircleProgress @JvmOverloads constructor(
     //轨道padding
     private val mPathPadding: Float
 
+    //是否为顺时针方向
+    private val mIsClockwise: Boolean
+
     init {
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.PopCircleProgress)
         mProgress = typeArray.getInt(R.styleable.PopCircleProgress_progress, 0)
@@ -73,6 +76,7 @@ class PopCircleProgress @JvmOverloads constructor(
         mProgressRepelAngle = typeArray.getFloat(R.styleable.PopCircleProgress_progressRepelAngle, 0f)
         mPathColor = typeArray.getColor(R.styleable.PopCircleProgress_pathColor, -1)
         mPathPadding = typeArray.getDimension(R.styleable.PopCircleProgress_pathPadding, 0f)
+        mIsClockwise = typeArray.getBoolean(R.styleable.PopCircleProgress_isClockwise, true)
         typeArray.recycle()
 
     }
@@ -117,59 +121,77 @@ class PopCircleProgress @JvmOverloads constructor(
         pathPaint.isAntiAlias = true
         pathPaint.strokeCap = Cap.ROUND
         pathPaint.style = Paint.Style.STROKE
-        pathPaint.strokeWidth = mProgressWidth
+        pathPaint.strokeWidth = mProgressWidth + mPathPadding
 
     }
 
 
-    lateinit var circleRectF: RectF
-    lateinit var pathCircleRectF:RectF
+    private lateinit var progressCircleRectF: RectF
     private fun initRectF() {
-        circleRectF = RectF(0f + mProgressWidth, 0f + mProgressWidth, measuredWidth.toFloat() - mProgressWidth, measuredWidth.toFloat() - mProgressWidth)
-
-
-
+        val progressOffset = mProgressWidth / 2 + mPathPadding / 2
+        progressCircleRectF =
+            RectF(0f + progressOffset, 0f + progressOffset, measuredWidth.toFloat() - progressOffset, measuredWidth.toFloat() - progressOffset)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        //canvas.save()
-        //canvas.translate(measuredWidth.toFloat() / 2, measuredWidth.toFloat() / 2)
+        canvas.save()
+        //如果不是顺时针方向 则将画布水平翻转后再绘制内容
+        if (!mIsClockwise) {
+            // 水平翻转：将 X 轴方向上的缩放比例设置为 -1
+            canvas.scale(-1f, 1f, measuredWidth / 2f, 0f);
+            // 垂直翻转：将 Y 轴方向上的缩放比例设置为 -1
+            // canvas.scale(1f, -1f, 0f,measuredHeight / 2f)
+        }
         //绘制Path
         if (mPathColor != -1) {
-            canvas.drawArc(circleRectF, -90f, 360f, false, pathPaint)
+            canvas.drawArc(progressCircleRectF, -90f, 360f, false, pathPaint)
         }
-
-        //绘制进度条
-        val progressAngle = (mProgress.toFloat() / mMaxProgress.toFloat()) * 360
-        canvas.drawArc(circleRectF, -90f, progressAngle, false, mainProgressPaint)
-
-        //绘制child
-        if (mIsShowChildProgress) {
-            //圆环直径
-            val d = abs(circleRectF.left - circleRectF.right)
-            //圆环周长
-            val circle = d * Math.PI
-            //算出绘制进度条 圆角突出部分占用的角度 绘制子进度条时减去
-            val roundAngle = 360f * ((mProgressWidth / 2 * 2) / circle.toFloat())
-            //子进度条开始的位置角度
-            val childStartAngle = progressAngle - 90f + roundAngle + mProgressRepelAngle
-            //子进度条总弧度角度 画个草稿计算一下就知道怎么算了
-            val childSweepAngle = 360f - progressAngle - roundAngle * 2 - mProgressRepelAngle * 2
-            if (childSweepAngle > 0) {
-                canvas.drawArc(circleRectF, childStartAngle, childSweepAngle, false, childProgressPaint)
+        if (mProgress != 0) {
+            //绘主制进度条
+            val progressAngle = (mProgress.toFloat() / mMaxProgress.toFloat()) * 360
+            canvas.drawArc(progressCircleRectF, -90f, progressAngle, false, mainProgressPaint)
+            //绘制子进度条
+            if (mIsShowChildProgress) {
+                //圆环直径
+                val d = abs(progressCircleRectF.left - progressCircleRectF.right)
+                //圆环周长
+                val circle = d * Math.PI
+                //算出绘制进度条 圆角突出部分占用的角度 绘制子进度条时减去
+                val roundAngle = 360f * ((mProgressWidth / 2 * 2) / circle.toFloat())
+                //子进度条开始的位置角度
+                val childStartAngle = progressAngle - 90f + roundAngle + mProgressRepelAngle
+                //子进度条总弧度角度 画个草稿计算一下就知道怎么算了
+                val childSweepAngle = 360f - progressAngle - roundAngle * 2 - mProgressRepelAngle * 2
+                if (childSweepAngle > 0) {
+                    canvas.drawArc(progressCircleRectF, childStartAngle, childSweepAngle, false, childProgressPaint)
+                }
+                Log.d("PopCircleProgress", "onDraw: childStartAngle: ${childStartAngle} childSweepAngle:$childSweepAngle")
             }
-            Log.d("PopCircleProgress", "onDraw: childStartAngle: ${childStartAngle} childSweepAngle:$childSweepAngle")
+            Log.d("PopCircleProgress", "onDraw: ${progressAngle}")
         }
-
-        Log.d("PopCircleProgress", "onDraw: ${progressAngle}")
-
-
+        canvas.restore()
     }
 
-
-    fun dip2px(context: Context, dp: Float): Float {
+    private fun dip2px(context: Context, dp: Float): Float {
         return dp * context.resources.displayMetrics.density + 0.5f
+    }
+
+    fun setProgress(progress: Int) {
+        mProgress = progress
+        invalidate()
+    }
+
+    fun setMaxProgress(progress: Int) {
+        mMaxProgress = progress
+    }
+
+    fun getProgress(): Int {
+        return mProgress
+    }
+
+    fun getMaxProgress(): Int {
+        return mMaxProgress
     }
 
 

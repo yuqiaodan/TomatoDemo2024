@@ -20,13 +20,19 @@
             android:orientation="vertical">
 
             <com.tomato.amelia.customviewstudy.view.PopCircleProgress
+                android:id="@+id/circle_progress"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="20dp"
+                app:childProgressColor="@color/keypad_green"
                 app:isShowChildProgress="true"
-                app:progress="80"
-                app:progressRepelAngle="5"
-                app:progressWidth="30dp" />
+                app:mainProgressColor="@color/keypad_orange"
+                app:maxProgress="1000"
+                app:pathColor="@color/keypad_gray"
+                app:pathPadding="5dp"
+                app:progress="100"
+                app:progressRepelAngle="3"
+                app:progressWidth="20dp" />
 
             <com.tomato.amelia.customviewstudy.view.WatchFaceView
                 android:id="@+id/watch_face"

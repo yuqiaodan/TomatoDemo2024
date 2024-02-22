@@ -1,13 +1,16 @@
 package com.tomato.amelia.customviewstudy
 
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.View.MeasureSpec
+import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import com.tomato.amelia.R
 import com.tomato.amelia.base.databinding.BaseActivity
+import com.tomato.amelia.customviewstudy.view.PopCircleProgress
 import com.tomato.amelia.customviewstudy.viewcomposite.InputNumberView
 import com.tomato.amelia.customviewstudy.viewgroup.FlowLayout
 import com.tomato.amelia.customviewstudy.viewgroup.KeypadView
@@ -32,6 +35,8 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
     }
 
     override fun initView() {
+
+        playProgressAnim(binding.circleProgress)
 
         binding.slideView.setActionListener(object : SlideMenu.OnActionClickListener {
             override fun onDelete() {
@@ -129,6 +134,22 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
                     "\nmeasuredWidth:${view.measuredWidth} measuredHeight:${view.measuredHeight}" +
                     "\nlayoutParams width:${view.layoutParams?.width} layoutParams height:${view.layoutParams?.height}"
         )
+
+    }
+
+    fun playProgressAnim(progressBar:PopCircleProgress){
+
+        val anim = ValueAnimator.ofInt(0, progressBar.getMaxProgress())
+        anim.interpolator = LinearInterpolator()
+        anim.addUpdateListener {
+            val value = it.animatedValue as Int
+            progressBar.setProgress(value)
+        }
+        anim.duration = 5 * 1000L
+        anim.repeatCount = ValueAnimator.INFINITE
+        anim.start()
+
+
 
     }
 }

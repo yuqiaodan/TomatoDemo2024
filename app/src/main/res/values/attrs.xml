@@ -57,9 +57,11 @@
         <attr name="childProgressColor" format="color"/>
         <attr name="isShowChildProgress" format="boolean"/>
         <attr name="progressRepelAngle" format="float"/>
-
         <attr name="pathColor" format="color"/>
         <attr name="pathPadding" format="dimension"/>
+
+        <attr name="isClockwise" format="boolean"/>
+
 
     </declare-styleable>
 
