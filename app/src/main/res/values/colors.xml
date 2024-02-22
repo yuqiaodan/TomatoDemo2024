@@ -11,7 +11,6 @@
     <color name="deep_gary">#3C3C3C</color>
 
 
-
     <color name="keypad_orange">#E07A5F</color>
     <color name="keypad_green">#81B29A</color>
     <color name="keypad_white">#F4F1DE</color>
@@ -25,5 +24,6 @@
     <color name="watch_red">#F64E60</color>
     <color name="watch_blue">#61C0BF</color>
 
+    <color name="watch_green">#C6E3A1</color>
 
 </resources>

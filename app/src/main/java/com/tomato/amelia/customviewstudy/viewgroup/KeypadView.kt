@@ -260,7 +260,6 @@ class KeypadView @JvmOverloads constructor(
         }
     }
 
-
     private var mKeypadListener: KeypadListener? = null
     fun setKeypadListener(listener: KeypadListener) {
         this.mKeypadListener = listener

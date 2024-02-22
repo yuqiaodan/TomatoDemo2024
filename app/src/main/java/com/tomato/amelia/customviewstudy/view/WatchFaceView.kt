@@ -12,6 +12,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import com.tomato.amelia.R
 import com.tomato.amelia.utils.MyUtils
+import java.util.Calendar
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -65,6 +66,9 @@ class WatchFaceView @JvmOverloads constructor(
     //bitmap目标矩形大小
     private var mBackgroundRectDst: Rect? = null
 
+
+    val mCalendar = Calendar.getInstance()
+
     init {
         /**
          * 第一步：获取相关属性，定义相关属性 init 中实现
@@ -72,7 +76,7 @@ class WatchFaceView @JvmOverloads constructor(
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.WatchFaceView)
         mSecondColor = typeArray.getColor(R.styleable.WatchFaceView_secondColor, context.getColor(R.color.watch_red))
         mMinuteColor = typeArray.getColor(R.styleable.WatchFaceView_minuteColor, context.getColor(R.color.watch_yellow))
-        mHourColor = typeArray.getColor(R.styleable.WatchFaceView_hourColor, context.getColor(R.color.watch_blue))
+        mHourColor = typeArray.getColor(R.styleable.WatchFaceView_hourColor, context.getColor(R.color.watch_green))
         mScaleColor = typeArray.getColor(R.styleable.WatchFaceView_scaleColor, context.getColor(R.color.white))
         mFaceBgId = typeArray.getResourceId(R.styleable.WatchFaceView_faceBg, -1)
         mScaleShow = typeArray.getBoolean(R.styleable.WatchFaceView_scaleShow, true)
@@ -100,6 +104,7 @@ class WatchFaceView @JvmOverloads constructor(
         typeArray.recycle()
 
         initPaint()
+
     }
 
     /**
@@ -143,6 +148,8 @@ class WatchFaceView @JvmOverloads constructor(
 
         setMeasuredDimension(targetSize, targetSize)
         initBackgroundRect()
+
+        //autoRunClock()
     }
 
     //秒针画笔
@@ -174,7 +181,7 @@ class WatchFaceView @JvmOverloads constructor(
         //画笔模式:描边模式  可选：描边/填充/填充且描边
         mSecondPaint.style = Paint.Style.STROKE
         //描边宽度
-        mSecondPaint.strokeWidth = 2f
+        mSecondPaint.strokeWidth = 6f
         //画笔Cap：半圆（圆角）结束  可选：按绘制路径（圆角）/半圆/直角
         mSecondPaint.strokeCap = Paint.Cap.ROUND
 
@@ -183,7 +190,7 @@ class WatchFaceView @JvmOverloads constructor(
         mMinutePaint.isAntiAlias = true
         mMinutePaint.color = mMinuteColor
         mMinutePaint.style = Paint.Style.STROKE
-        mMinutePaint.strokeWidth = 4f
+        mMinutePaint.strokeWidth = 8f
         mMinutePaint.strokeCap = Paint.Cap.ROUND
 
 
@@ -192,7 +199,7 @@ class WatchFaceView @JvmOverloads constructor(
         mHourPaint.isAntiAlias = true
         mHourPaint.color = mHourColor
         mHourPaint.style = Paint.Style.STROKE
-        mHourPaint.strokeWidth = 6f
+        mHourPaint.strokeWidth = 12f
         mHourPaint.strokeCap = Paint.Cap.ROUND
 
 
@@ -293,25 +300,151 @@ class WatchFaceView @JvmOverloads constructor(
          *  可以通过Math.toRadians将角度转为期望的弧度传入Math.sin进行计算
          *  double radians = Math.toRadians(degrees);
          * */
-        //角度30度画一个刻度 总共画12个
-        val th = 360 / 12
+
         //绘制刻度
         for (i in 0..12) {
-            //角度转为弧度
-            val radian = Math.toRadians(th * i.toDouble())
+            //角度转为弧度  角度每30度画一个刻度 总共画12个 需要将角度转为弧度
+            val radian = Math.toRadians(360f * (i / 12f).toDouble())
             val x1 = r1 * cos(radian).toFloat()
             val y1 = r1 * sin(radian).toFloat()
 
             val x2 = r2 * cos(radian).toFloat()
             val y2 = r2 * sin(radian).toFloat()
 
-            Log.d("WatchFaceView", "onDraw: ${th * i}  ${x1} ${y1} ${x2} ${y2}")
+            Log.d("WatchFaceView", "onDraw:${x1} ${y1} ${x2} ${y2}")
             canvas.drawLine(x1, y1, x2, y2, mScalePaint)
         }
-        //恢复到画布之前保存的状态 坐标（0，0）恢复到左上角
+        canvas.drawCircle(0f, 0f, 10f, mScalePaint)
+
+        //设置当前时间
+        //mCalendar.time = Date(System.currentTimeMillis())
+        mCalendar.timeInMillis = System.currentTimeMillis()
+
+        //绘制指针（分针、时针、秒针）
+        //hour [0 , 11]
+        val hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+        //hour [0 , 59]
+        val minute = mCalendar.get(Calendar.MINUTE)
+        //hour [0 , 59]
+        val second = mCalendar.get(Calendar.SECOND)
+
+        val hourF = hour + minute / 60f + second / 3600f
+        val minuteF = minute + second / 60f
+
+        val adPm = mCalendar.get(Calendar.AM_PM)
+        if (adPm == Calendar.AM) {
+            //上午
+        } else {
+            //下午
+        }
+
+        //绘制秒针 先保存当前画布状态
+        canvas.save()
+        //计算秒针旋转角度 一圈总共360度  秒针角度= 360 * (second / 60f)
+        val secondDegrees = 360 * (second / 60f)
+        //根据角度 旋转画布坐标系 准备在x轴上画出秒针 由于X轴默认 水平从左到右 但秒为0时 秒针应该为竖直向上 偏移角度为90度 所以减去
+        canvas.rotate(secondDegrees - 90, 0f, 0f)
+        //在x轴上画出秒针
+        canvas.drawLine(0f, 0f, width / 2 * 0.9f, 0f, mSecondPaint)
+        //恢复绘制秒针之前的状态
+        canvas.restore()
+
+        canvas.save()
+        //计算分针旋转角度 一圈总共360度  分针角度= 360 * (minuteF / 60f)
+        val minuteDegrees = 360 * (minuteF / 60f)
+        canvas.rotate(minuteDegrees - 90, 0f, 0f)
+        canvas.drawLine(0f, 0f, width / 2 * 0.6f, 0f, mMinutePaint)
+        canvas.restore()
+
+        canvas.save()
+        //计算时针旋转角度 一圈总共360度  时针角度= 360 * (hourF / 12f)
+        val hourDegrees = 360 * (hourF / 12f)
+        canvas.rotate(hourDegrees - 90, 0f, 0f)
+        canvas.drawLine(0f, 0f, width / 2 * 0.3f, 0f, mHourPaint)
         canvas.restore()
 
 
+        //恢复到画布之前保存的状态 坐标（0，0）恢复到左上角
+        canvas.restore()
+
+    }
+
+
+    /**
+     * 以子线程的方式刷新UI 让时钟动起来（不太推荐这种方式）
+     * 注意:需要处理view不可见的情况 也需要处理view从window中移除的情况 及时恢复和停止线程
+     * */
+    fun autoRunClockOnThread() {
+        val thread = Thread(object : Runnable {
+            override fun run() {
+                while (true) {
+                    Thread.sleep(1000L)
+                    postInvalidate()
+                }
+
+            }
+        })
+        thread.start()
+    }
+
+    //时钟是否正在更新
+    private var isUpdating = false
+
+    /**
+     * 当你的 View 被添加到窗口中时，系统会调用这个方法。
+     * 在此处以handler的方式让时钟动起来 很方便的处理view被移除和添加后 自动暂停动画等操作
+     * view自带了handler的所有方法 post postDelay 直接可以调用 效果和使用handler是一样的
+     * */
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        /***
+         * post和postDelayed也是基于handle实现的
+         * invalidate()   触发重绘 只能在主线程调用
+         * postInvalidate()   触发重绘 可以在子线程调用
+         * ***/
+        isUpdating = true
+        post(object : Runnable {
+            override fun run() {
+                if (isUpdating) {
+                    invalidate()
+                    postDelayed(this, 1000L)
+                } else {
+                    //移除掉延迟执行的任务
+                    removeCallbacks(this)
+                }
+            }
+        })
+    }
+
+    /**
+     *  当你的 View 从窗口分离(例如被移出视图树)时，系统会调用这个方法。这通常发生在 View 被移除或 Activity 被销毁的情况下。
+     * */
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        isUpdating = false
+    }
+
+
+    /**
+     * 当包含你自定义 View 的 Window 可见性发生改变时，比如由于包含该 View 的 Activity 的生命周期导致其被隐藏或显示，系统会调用这个方法
+     * */
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        super.onWindowVisibilityChanged(visibility)
+    }
+
+    /**
+     * 这个回调会传递给你一个改变后的可见性值，该值可以是 View.VISIBLE、View.INVISIBLE 或 View.GONE。
+     * 你可以执行需要的操作，例如启动或暂停动画，资源加载或释放等，以适应 View 的可见性状态变化
+     * 注意，在初始化 View 或因为其他原因（如父容器的可见性变化）导致 View 可见性变化时，也会调用 onVisibilityChanged，并不仅限于自定义 View 本身的 setVisibility 方法调用
+     * 确保你的自定义 View 在消失时可以正确释放资源，以及在再次出现时可以正确恢复状态，这有助于防止潜在的内存泄漏或不必要的资源消耗
+     * */
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (visibility == View.VISIBLE) {
+            // View 变为可见
+        } else if (visibility == View.INVISIBLE || visibility == View.GONE) {
+            // View 变为不可见或完全不显示
+        }
     }
 
 }

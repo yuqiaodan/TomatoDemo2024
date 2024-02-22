@@ -12,25 +12,13 @@ import android.view.View
  * 1.判断
  */
 //kotlin 可以设置参数默认值 所以可以采用如下写法
-class MyCircleView : View {
+class MyCircleView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
     init {
-        initView(context)
-    }
 
-    constructor(context: Context?) : super(context) {
-        initView(context)
     }
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        initView(context)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        initView(context)
-    }
-    //只需要前三个构造函数就可以了
-    //constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr,defStyleRes)
 
     private fun initView(context: Context?) {
 
