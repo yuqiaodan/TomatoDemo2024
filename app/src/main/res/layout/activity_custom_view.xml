@@ -18,6 +18,10 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical">
+            
+            <com.tomato.amelia.customviewstudy.viewcomposite.PagerBanner
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
 
             <com.tomato.amelia.customviewstudy.view.PopCircleProgress
                 android:id="@+id/circle_progress"
