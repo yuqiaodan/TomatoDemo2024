@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.tomato.amelia.R
 import com.tomato.amelia.databinding.ItemPagerBinding
 import com.tomato.amelia.databinding.LayoutViewpagerBannerBinding
@@ -36,21 +37,24 @@ class PagerBanner @JvmOverloads constructor(
 
     }
 
-    val picList:ArrayList<Int>
+    private val picList: ArrayList<Int>
+
     init {
         picList = arrayListOf()
         initView()
+        initEvent()
     }
 
     lateinit var binding: LayoutViewpagerBannerBinding
 
-    var adapter: PagerAdapter? = null
+    var mAdapter: PagerAdapter? = null
 
     fun initView() {
         binding = LayoutViewpagerBannerBinding.inflate(LayoutInflater.from(context), this, true)
-        adapter = object : PagerAdapter() {
+        mAdapter = object : PagerAdapter() {
             override fun getCount(): Int {
-                return picList.size
+                //取整数最大值 做一个伪无限左右滑动
+                return Int.MAX_VALUE
             }
 
             override fun isViewFromObject(view: View, obj: Any): Boolean {
@@ -58,23 +62,46 @@ class PagerBanner @JvmOverloads constructor(
             }
 
             override fun instantiateItem(container: ViewGroup, position: Int): Any {
-                val itemBinding = ItemPagerBinding.inflate(LayoutInflater.from(context),container,false)
-                itemBinding.ivCover.setImageResource(picList[position])
+                val itemBinding = ItemPagerBinding.inflate(LayoutInflater.from(context), container, false)
+
+                val mPosition = position % picList.size
+                itemBinding.ivCover.setImageResource(picList[mPosition])
                 container.addView(itemBinding.root)
                 return itemBinding.root
             }
 
-            override fun destroyItem(container: ViewGroup, position: Int,obj: Any) {
+            override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
                 container.removeView(obj as View)
             }
         }
-        binding.viewPager.adapter = adapter
-
+        binding.viewPager.adapter = mAdapter
         setData()
     }
 
 
-    fun setData(){
+    fun initEvent(){
+
+
+        binding.viewPager.addOnPageChangeListener(object :ViewPager.OnPageChangeListener{
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+
+            }
+        })
+
+
+
+
+    }
+
+    fun setData() {
         picList.add(R.mipmap.pager_pic_1)
         picList.add(R.mipmap.pager_pic_2)
         picList.add(R.mipmap.pager_pic_3)
@@ -82,8 +109,17 @@ class PagerBanner @JvmOverloads constructor(
         picList.add(R.mipmap.pager_pic_5)
         picList.add(R.mipmap.pager_pic_6)
         picList.add(R.mipmap.pager_pic_7)
+        mAdapter?.notifyDataSetChanged()
 
-        adapter?.notifyDataSetChanged()
+        //设置一个中间位置 保证左右滑动均为伪无限
+        binding.viewPager.currentItem = Int.MAX_VALUE / 2 + 1
+    }
+
+
+
+    fun setAdapter(adapter:PagerAdapter ){
+        mAdapter =  adapter
+        binding.viewPager.adapter = mAdapter
     }
 
 }
