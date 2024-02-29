@@ -4,18 +4,23 @@ import android.animation.ValueAnimator
 import android.graphics.Color
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.MeasureSpec
+import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
+import androidx.viewpager.widget.PagerAdapter
 import com.tomato.amelia.R
 import com.tomato.amelia.base.databinding.BaseActivity
 import com.tomato.amelia.customviewstudy.view.PopCircleProgress
 import com.tomato.amelia.customviewstudy.viewcomposite.InputNumberView
+import com.tomato.amelia.customviewstudy.viewcomposite.PagerBanner
 import com.tomato.amelia.customviewstudy.viewgroup.FlowLayout
 import com.tomato.amelia.customviewstudy.viewgroup.KeypadView
 import com.tomato.amelia.customviewstudy.viewgroup.SlideMenu
 import com.tomato.amelia.databinding.ActivityCustomViewBinding
+import com.tomato.amelia.databinding.ItemPagerBinding
 import com.tomato.amelia.utils.MyUtils
 
 /**
@@ -35,6 +40,9 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
     }
 
     override fun initView() {
+
+
+        initBanner()
 
         playProgressAnim(binding.circleProgress)
 
@@ -137,7 +145,7 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
 
     }
 
-    fun playProgressAnim(progressBar:PopCircleProgress){
+    fun playProgressAnim(progressBar: PopCircleProgress) {
         val anim = ValueAnimator.ofInt(0, progressBar.getMaxProgress())
         anim.interpolator = LinearInterpolator()
         anim.addUpdateListener {
@@ -147,5 +155,49 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
         anim.duration = 5 * 1000L
         anim.repeatCount = ValueAnimator.INFINITE
         anim.start()
+    }
+
+
+    data class PagerItem(val title: String, val pic: Int)
+
+    fun initBanner() {
+        val picList: ArrayList<PagerItem> = arrayListOf()
+        picList.add(PagerItem("第1张图片", R.mipmap.pager_pic_1))
+        picList.add(PagerItem("第2张图片", R.mipmap.pager_pic_2))
+        picList.add(PagerItem("第3张图片", R.mipmap.pager_pic_3))
+        picList.add(PagerItem("第4张图片", R.mipmap.pager_pic_4))
+        picList.add(PagerItem("第5张图片", R.mipmap.pager_pic_5))
+        picList.add(PagerItem("第6张图片", R.mipmap.pager_pic_6))
+        picList.add(PagerItem("第7张图片", R.mipmap.pager_pic_7))
+
+        val adapter = object : PagerAdapter() {
+            override fun getCount(): Int {
+                return picList.size
+            }
+
+            override fun isViewFromObject(view: View, obj: Any): Boolean {
+                return view == obj
+            }
+
+            override fun instantiateItem(container: ViewGroup, position: Int): Any {
+                val itemBinding = ItemPagerBinding.inflate(LayoutInflater.from(this@CustomViewActivity), container, false)
+                val mPosition = position % picList.size
+                itemBinding.ivCover.setImageResource(picList[mPosition].pic)
+                container.addView(itemBinding.root)
+                return itemBinding.root
+            }
+
+            override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
+                container.removeView(obj as View)
+            }
+        }
+
+        binding.viewBanner.setData(adapter, object : PagerBanner.BindTitleListener {
+            override fun getTitle(position: Int): String {
+                return picList[position].title
+            }
+        })
+
+
     }
 }
