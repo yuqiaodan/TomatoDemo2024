@@ -58,15 +58,16 @@ class PagerBanner @JvmOverloads constructor(
     fun setAdapter(adapter: BannerAdapter) {
 
         mAdapter = adapter
+        //提前加载左右2个
+        binding.viewPager.offscreenPageLimit=5
+
         binding.viewPager.adapter = mAdapter
         mAdapter?.notifyDataSetChanged()
-
         val startIndex = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2 % adapter.getItemCount())
         //默认从 Int.MAX_VALUE 中间开始 这样左右可以做到伪无限 但要减去余数的偏移量 以从0开始
         binding.viewPager.setCurrentItem(startIndex, false)
         binding.tvTitle.text = adapter.getTitle(0)
         initIndicator(0)
-
     }
 
     private fun initIndicator(startPosition: Int) {
