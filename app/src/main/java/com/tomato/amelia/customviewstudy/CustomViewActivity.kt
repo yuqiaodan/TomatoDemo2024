@@ -10,7 +10,6 @@ import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
-import androidx.viewpager.widget.PagerAdapter
 import com.tomato.amelia.R
 import com.tomato.amelia.base.databinding.BaseActivity
 import com.tomato.amelia.customviewstudy.view.PopCircleProgress
@@ -169,17 +168,12 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
         picList.add(PagerItem("第5张图片", R.mipmap.pager_pic_5))
         picList.add(PagerItem("第6张图片", R.mipmap.pager_pic_6))
         picList.add(PagerItem("第7张图片", R.mipmap.pager_pic_7))
-
-        val adapter = object : PagerAdapter() {
-            override fun getCount(): Int {
-                return picList.size
+        val adapter = object : PagerBanner.BannerAdapter() {
+            override fun getItemCount(): Int {
+               return picList.size
             }
-
-            override fun isViewFromObject(view: View, obj: Any): Boolean {
-                return view == obj
-            }
-
-            override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            override fun getItemView(container: ViewGroup, position: Int): Any {
+                Log.d("PagerBanner", "getItemView:$position ")
                 val itemBinding = ItemPagerBinding.inflate(LayoutInflater.from(this@CustomViewActivity), container, false)
                 val mPosition = position % picList.size
                 itemBinding.ivCover.setImageResource(picList[mPosition].pic)
@@ -187,17 +181,10 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
                 return itemBinding.root
             }
 
-            override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-                container.removeView(obj as View)
-            }
-        }
-
-        binding.viewBanner.setData(adapter, object : PagerBanner.BindTitleListener {
             override fun getTitle(position: Int): String {
                 return picList[position].title
             }
-        })
-
-
+        }
+        binding.viewBanner.setAdapter(adapter)
     }
 }

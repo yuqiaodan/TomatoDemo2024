@@ -3,8 +3,10 @@ package com.tomato.amelia.customviewstudy.viewcomposite
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.get
@@ -21,9 +23,7 @@ class PagerBanner @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    private var mAdapter: PagerAdapter? = null
-
-    private var mTitleBinder: BindTitleListener? = null
+    private var mAdapter: BannerAdapter? = null
 
     init {
         initView()
@@ -37,15 +37,16 @@ class PagerBanner @JvmOverloads constructor(
     }
 
     private fun initEvent() {
-
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
 
+            }
             override fun onPageSelected(position: Int) {
-                binding.tvTitle.text = mTitleBinder?.getTitle(position) ?: ""
+                Log.d("PagerBanner", "onPageSelected:$position ")
+                val itemPosition = position % (mAdapter?.getItemCount() ?: 1)
+                binding.tvTitle.text = mAdapter?.getTitle(itemPosition) ?: ""
                 //切换指示器
-                updateIndicator()
+                updateIndicator(itemPosition)
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -54,24 +55,28 @@ class PagerBanner @JvmOverloads constructor(
         })
     }
 
-    fun setData(adapter: PagerAdapter, listener: BindTitleListener) {
+    fun setAdapter(adapter: BannerAdapter) {
+
         mAdapter = adapter
-        mTitleBinder = listener
         binding.viewPager.adapter = mAdapter
-        binding.viewPager.setCurrentItem(0, false)
-        binding.tvTitle.text = listener.getTitle(0)
         mAdapter?.notifyDataSetChanged()
-        initIndicator()
+
+        val startIndex = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2 % adapter.getItemCount())
+        //默认从 Int.MAX_VALUE 中间开始 这样左右可以做到伪无限 但要减去余数的偏移量 以从0开始
+        binding.viewPager.setCurrentItem(startIndex, false)
+        binding.tvTitle.text = adapter.getTitle(0)
+        initIndicator(0)
+
     }
 
-    private fun initIndicator() {
+    private fun initIndicator(startPosition: Int) {
         mAdapter?.let { adapter ->
-            val count = adapter.count
+            val count = adapter.getItemCount()
             binding.llIndicator.removeAllViews()
             for (i in 0 until count) {
                 val ponit = View(context)
                 ponit.tag = i
-                if (binding.viewPager.currentItem == i) {
+                if (startPosition == i) {
                     ponit.setBackgroundColor(Color.parseColor("#FF0000"))
                 } else {
                     ponit.setBackgroundColor(Color.parseColor("#FFFFFF"))
@@ -84,12 +89,12 @@ class PagerBanner @JvmOverloads constructor(
         }
     }
 
-    private fun updateIndicator() {
+    private fun updateIndicator(position: Int) {
         val indicatorCount = binding.llIndicator.childCount
         if (indicatorCount > 0) {
             for (i in 0 until binding.llIndicator.childCount) {
                 val point = binding.llIndicator[i]
-                if (binding.viewPager.currentItem == point.tag) {
+                if (position == point.tag) {
                     point.setBackgroundColor(Color.parseColor("#FF0000"))
                 } else {
                     point.setBackgroundColor(Color.parseColor("#FFFFFF"))
@@ -98,19 +103,38 @@ class PagerBanner @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 实现无限轮播思路：
+     * 思路1：设置 getCount()为 Int.MAX_VALUE  从中间开始 左右都为10亿 每秒滑动1次 也需要11574天(31.7年)才能滑动完 可以理解为无限了（伪无限）
+     * 思路2：设置数据 [1，2，3]为 [3(补)，1，2，3，1(补)] 在切换位补位的1和3时 使用viewPager.setCurrentItem(0, false)切换到实际的位置（真无限）
+     * 推荐思路1 方便实现 思路2虽然是真无限，但逻辑相对比较复杂，且可以看到重复加载了两个布局3(补)和1(补),运行效率较低
+     * */
+    abstract class BannerAdapter : PagerAdapter() {
 
-    interface BindTitleListener {
+        final override fun getCount(): Int {
+            return Int.MAX_VALUE
+        }
 
-        fun getTitle(position: Int): String
+        abstract fun getItemCount(): Int
+
+        abstract fun getItemView(container: ViewGroup, position: Int): Any
+
+        abstract fun getTitle(position: Int): String
+
+        override fun isViewFromObject(view: View, obj: Any): Boolean {
+            return view == obj
+        }
+
+        final override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val itemPosition = position % getItemCount()
+            return getItemView(container, itemPosition)
+        }
+
+        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
+            container.removeView(obj as View)
+        }
 
     }
 
-    /**
-     * 实现无限轮播思路：
-     * 思路1：设置 getCount()为 Int.MAX_VALUE  从中间开始 左右都为10亿 每秒滑动1次 也需要11574天才能滑动完 可以理解为无限了（伪无限）
-     * 思路2：设置数据 [1，2，3]为 [3(补)，1，2，3，1(补)] 在切换位补位的1和3时 使用viewPager.setCurrentItem(0, false)切换到实际的位置（真无限）
-     * 推荐思路1 方便实现
-     * 思路2虽然是真无限，但逻辑相对比较复杂，且可以看到多加载了两个布局3(补)和1(补),运行效率较低
-     * */
 
 }
