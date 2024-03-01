@@ -34,7 +34,7 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
 
     override fun initView() {
-       // jumpToCustom()
+        jumpToCustom()
 
         setLog(
             "brand:${Build.BRAND}\n" +
