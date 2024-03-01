@@ -11,6 +11,7 @@
     </data>
 
     <androidx.core.widget.NestedScrollView
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -69,6 +70,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="50dp"
                 android:text="自定义view activity"
+                android:textAllCaps="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_slide_down"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:text="仿抖音无限下滑（ViewPager2）"
                 android:textAllCaps="false" />
 
         </LinearLayout>

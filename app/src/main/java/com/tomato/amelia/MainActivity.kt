@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.tomato.amelia.base.databinding.BaseVMActivity
 import com.tomato.amelia.customviewstudy.CustomViewActivity
+import com.tomato.amelia.customviewstudy.SlideDownActivity
 import com.tomato.amelia.databinding.ActivityMainBinding
 import com.tomato.amelia.databinding1.TaobaoActivity
 import com.tomato.amelia.utils.MyUtils
@@ -33,7 +34,7 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
 
     override fun initView() {
-        jumpToCustom()
+       // jumpToCustom()
 
         setLog(
             "brand:${Build.BRAND}\n" +
@@ -44,19 +45,19 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
         binding.btnDatabinding1.setOnClickListener(this)
         binding.btnDatabinding2.setOnClickListener(this)
         binding.btnCustomView.setOnClickListener(this)
+        binding.btnSlideDown.setOnClickListener(this)
     }
 
     private fun jumpToCustom() {
         val mIntent = Intent()
         mIntent.setClassName(this, CustomViewActivity::class.java.name)
-        setLog("start: ${CustomViewActivity::class.java.name}")
         startActivity(mIntent)
     }
 
     override fun onClick(v: View?) {
         when (v) {
-            binding.btnTest -> {
 
+            binding.btnTest -> {
                 //A应用中唤醒部分代码逻辑
                 val lIntent = packageManager.getLaunchIntentForPackage("cn.rush.saves.battery")
                 if (lIntent != null) {
@@ -66,7 +67,6 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
                     lIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(lIntent)
                 }
-
                 //A应用唤醒部分代码逻辑
                 /*val intent2 = Intent(Intent.ACTION_MAIN)
                 */
@@ -77,6 +77,9 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
                 startActivity(intent2)*/
             }
 
+            binding.btnSlideDown->{
+                startActivity(Intent(this, SlideDownActivity::class.java))
+            }
             binding.btnDatabinding1 -> {
                 startActivity(Intent(this, TaobaoActivity::class.java))
             }
@@ -87,14 +90,11 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
             binding.btnCustomView -> {
                 //自定义view
-                startActivity(Intent(this, CustomViewActivity::class.java))
+                jumpToCustom()
 
             }
-        }
-    }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return true
+        }
     }
 
     fun test(time1: Long, time2: Long): Int {
