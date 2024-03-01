@@ -19,7 +19,6 @@ class TextClipProgress @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-
     //文字内容
     var text: String = "Hello World!"
 
@@ -62,13 +61,10 @@ class TextClipProgress @JvmOverloads constructor(
         textDefaultPaint.color = mTextColorDefault
         textDefaultPaint.textSize = mTextSize
         textDefaultPaint.style = Paint.Style.FILL
-
         textProgressPaint = Paint()
         textProgressPaint.color = mTextColorProgress
         textProgressPaint.textSize = mTextSize
         textDefaultPaint.style = Paint.Style.FILL
-
-
     }
 
 
@@ -76,7 +72,7 @@ class TextClipProgress @JvmOverloads constructor(
         super.onDraw(canvas)
 
         /**
-         * 思路1：先绘制进度条轨道底色及文字，然后剪切canvas为需要的长度 并绘制进度条本体及文字
+         * 思路1：先绘制进度条轨道底色及文字，然后剪切canvas为需要的进度条形状 并绘制进度条本体及文字
          *
          * 思路2：先绘制进度条本体和文字，然后把画布需要漏出来的部分剪切掉，并在剩余的画布上绘制进度条轨道底色及文字
          *
@@ -94,16 +90,58 @@ class TextClipProgress @JvmOverloads constructor(
          * 采用思路1实现
          * */
 
+        /***
+         * 先绘制底部进度条轨道和文案
+         * */
+        canvas.save()
+        //绘制进度条轨道颜色
+        canvas.drawColor(mProgressPathColor)
+        //移到居中位置方便绘制文字 默认居中
+        canvas.translate(measuredWidth / 2f, measuredHeight / 2f)
+        // 获取文字的宽度
+        val textWidth = textDefaultPaint.measureText(text)
+        // 获取文字的高度
+        val fontMetrics = textDefaultPaint.fontMetrics
+        val textHeight = fontMetrics.descent - fontMetrics.ascent
+        val textOffset = textHeight / 2 - fontMetrics.descent
+        /**
+         * 在 canvas.drawText("123", x, y, paint); 方法中，x 和 y 的坐标指的不是文字的左上角，而是基线 (baseline) 的起始位置
+         * 所以为了使文案水平和垂直居中 x=-textWidth / 2 , y = textOffset
+         * */
+        canvas.drawText(text, -textWidth / 2, textOffset, textDefaultPaint)
+        canvas.restore()
+
+        /***
+         * 剪切画布然后绘制进度条 以及在相同位置位置文案
+         * */
+        canvas.save()
+        clipOutRectF.left = 0f
+        clipOutRectF.top = 0f
+        clipOutRectF.bottom = measuredHeight.toFloat()
+        clipOutRectF.right = (mProgress / mMaxProgress.toFloat()) * measuredWidth.toFloat()
+        //设置剪切圆角
+        val r = measuredHeight/2f
+        clipOutPath.addRoundRect(clipOutRectF,  floatArrayOf(0f, 0f, r, r, r, r, 0f, 0f), Path.Direction.CW)
+        canvas.clipPath(clipOutPath)
+
+        //绘制进度条颜色
+        canvas.drawColor(mProgressColor)
+        canvas.save()
+        canvas.translate(measuredWidth / 2f, measuredHeight / 2f)
+        canvas.drawText(text, -textWidth / 2, textOffset, textProgressPaint)
+        canvas.restore()
+        canvas.save()
+    }
 
 
-
-
+    /**
+     * 思路2参考代码 主要clipOutPath的使用
+     * 再Android O以下使用   canvas.clipPath(clipOutPath, Region.Op.DIFFERENCE)替代
+     * */
+    fun drawProgress2(canvas: Canvas){
         /***
          * 绘制进度条底色 和文字
          * */
-
-
-
         //绘制进度条颜色
         canvas.drawColor(mProgressColor)
         //移到居中位置方便绘制文字 默认居中
@@ -115,25 +153,19 @@ class TextClipProgress @JvmOverloads constructor(
         val textHeight = fontMetrics.descent - fontMetrics.ascent
         val textOffset = textHeight / 2 - fontMetrics.descent
         canvas.translate(measuredWidth / 2f, measuredHeight / 2f)
-
         /**
          * 在 canvas.drawText("123", x, y, paint); 方法中，x 和 y 的坐标指的不是文字的左上角，而是基线 (baseline) 的起始位置
          * */
-
         canvas.drawText(text, -textWidth / 2, textOffset, textProgressPaint)
         canvas.restore()
-
         /***
          * 剪切画布然后绘制进度条path 覆盖层
          * */
-
-
         canvas.save()
         clipOutRectF.left = 0f
         clipOutRectF.top = 0f
         clipOutRectF.bottom = measuredHeight.toFloat()
         clipOutRectF.right = (mProgress / mMaxProgress.toFloat()) * measuredWidth.toFloat()
-
         val r = measuredHeight/2f
         clipOutPath.addRoundRect(clipOutRectF,  floatArrayOf(0f, 0f, r, r, r, r, 0f, 0f), Path.Direction.CW)
 
@@ -149,8 +181,6 @@ class TextClipProgress @JvmOverloads constructor(
         canvas.translate(measuredWidth / 2f, measuredHeight / 2f)
         canvas.drawText(text, -textWidth / 2, textOffset, textDefaultPaint)
         canvas.restore()
-
-
     }
 
 
