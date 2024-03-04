@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.tomato.amelia.R
 import com.tomato.amelia.base.databinding.BaseActivity
 import com.tomato.amelia.customviewstudy.view.PopCircleProgress
+import com.tomato.amelia.customviewstudy.view.TextClipProgress
 import com.tomato.amelia.customviewstudy.viewcomposite.InputNumberView
 import com.tomato.amelia.customviewstudy.viewcomposite.PagerBanner
 import com.tomato.amelia.customviewstudy.viewgroup.FlowLayout
@@ -44,6 +45,8 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
         initBanner()
 
         playProgressAnim(binding.circleProgress)
+
+        playTextProgressAnim(binding.textProgress)
 
         binding.slideView.setActionListener(object : SlideMenu.OnActionClickListener {
             override fun onDelete() {
@@ -145,6 +148,8 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
     }
 
     fun playProgressAnim(progressBar: PopCircleProgress) {
+
+
         val anim = ValueAnimator.ofInt(0, progressBar.getMaxProgress())
         anim.interpolator = LinearInterpolator()
         anim.addUpdateListener {
@@ -156,6 +161,17 @@ class CustomViewActivity : BaseActivity<ActivityCustomViewBinding>() {
         anim.start()
     }
 
+    fun playTextProgressAnim(progressBar:TextClipProgress){
+        val anim1 = ValueAnimator.ofInt(0, progressBar.getMaxProgress())
+        anim1.interpolator = LinearInterpolator()
+        anim1.addUpdateListener {
+            val value = it.animatedValue as Int
+            progressBar.setProgress(value)
+        }
+        anim1.duration = 5 * 1000L
+        anim1.repeatCount = ValueAnimator.INFINITE
+        anim1.start()
+    }
 
     data class PagerItem(val title: String, val pic: Int)
 

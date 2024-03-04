@@ -119,18 +119,18 @@ class TextClipProgress @JvmOverloads constructor(
         clipOutRectF.top = 0f
         clipOutRectF.bottom = measuredHeight.toFloat()
         clipOutRectF.right = (mProgress / mMaxProgress.toFloat()) * measuredWidth.toFloat()
+
         //设置剪切圆角
         val r = measuredHeight/2f
+        //重置一下Path 避免保留上次绘制的路径影响到下次绘制
+        clipOutPath.reset()
         clipOutPath.addRoundRect(clipOutRectF,  floatArrayOf(0f, 0f, r, r, r, r, 0f, 0f), Path.Direction.CW)
         canvas.clipPath(clipOutPath)
-
         //绘制进度条颜色
         canvas.drawColor(mProgressColor)
-        canvas.save()
         canvas.translate(measuredWidth / 2f, measuredHeight / 2f)
         canvas.drawText(text, -textWidth / 2, textOffset, textProgressPaint)
         canvas.restore()
-        canvas.save()
     }
 
 
@@ -167,8 +167,8 @@ class TextClipProgress @JvmOverloads constructor(
         clipOutRectF.bottom = measuredHeight.toFloat()
         clipOutRectF.right = (mProgress / mMaxProgress.toFloat()) * measuredWidth.toFloat()
         val r = measuredHeight/2f
+        clipOutPath.reset()
         clipOutPath.addRoundRect(clipOutRectF,  floatArrayOf(0f, 0f, r, r, r, r, 0f, 0f), Path.Direction.CW)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.clipOutPath(clipOutPath)
         } else {
@@ -187,4 +187,24 @@ class TextClipProgress @JvmOverloads constructor(
     private fun dip2px(context: Context, dp: Float): Float {
         return dp * context.resources.displayMetrics.density + 0.5f
     }
+
+
+
+    fun setProgress(progress: Int) {
+        mProgress = progress
+        invalidate()
+    }
+
+    fun setMaxProgress(progress: Int) {
+        mMaxProgress = progress
+    }
+
+    fun getProgress(): Int {
+        return mProgress
+    }
+
+    fun getMaxProgress(): Int {
+        return mMaxProgress
+    }
+
 }

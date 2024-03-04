@@ -60,4 +60,19 @@
     </declare-styleable>
 
 
+    <!--<declare-styleable name="TextClipProgress">
+        <attr name="progress" format="integer"/>
+        <attr name="maxProgress" format="integer"/>
+        <attr name="text" format="string"/>
+        <attr name="textSize" format="dimension"/>
+
+        <attr name="mainProgressColor" format="color"/>
+        <attr name="childProgressColor" format="color"/>
+        <attr name="isShowChildProgress" format="boolean"/>
+        <attr name="progressRepelAngle" format="float"/>
+        <attr name="pathColor" format="color"/>
+        <attr name="isClockwise" format="boolean"/>
+    </declare-styleable>
+-->
+
 </resources>
