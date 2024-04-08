@@ -2,14 +2,18 @@ package com.tomato.amelia
 
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.tomato.amelia.base.databinding.BaseVMActivity
 import com.tomato.amelia.customviewstudy.CustomViewActivity
 import com.tomato.amelia.customviewstudy.SlideDownActivity
 import com.tomato.amelia.databinding.ActivityMainBinding
 import com.tomato.amelia.databinding1.TaobaoActivity
-import com.tomato.amelia.utils.MyUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -22,6 +26,7 @@ import kotlin.math.abs
  * 3.LiveData postValue后立刻取value取不到
  * **/
 class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.OnClickListener {
+
 
 
     override fun getViewModelClass(): Class<MainViewModel> {
@@ -46,6 +51,12 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
         binding.btnDatabinding2.setOnClickListener(this)
         binding.btnCustomView.setOnClickListener(this)
         binding.btnSlideDown.setOnClickListener(this)
+
+
+        viewModel.testLiveData.observe(this){
+            Log.d("11111aaa", "testLiveData: ${it}")
+            setLog("${it}\n")
+        }
     }
 
     private fun jumpToCustom() {
@@ -58,15 +69,36 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
         when (v) {
 
             binding.btnTest -> {
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    for (i in 1..100){
+                        Log.d("sssaaa", kotlin.random.Random.nextInt(1,3).toString())
+                        delay(50L)
+                    }
+
+                    val list = listOf<Int>(1,2)
+                    Log.d("sssaaa", "============================")
+                    for (i in 1..100){
+                        Log.d("sssaaa", list.random().toString())
+                        delay(50L)
+
+                    }
+
+                }
+
+
+
+
+
                 //A应用中唤醒部分代码逻辑
-                val lIntent = packageManager.getLaunchIntentForPackage("cn.rush.saves.battery")
+                /*val lIntent = packageManager.getLaunchIntentForPackage("cn.rush.saves.battery")
                 if (lIntent != null) {
                     //inten可用来在两个APP间传递数据
                     lIntent.putExtra("testdata", "TomatoDemo2024拉起")
                     //setFlags看自己情况使用，也可以不调用
                     lIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(lIntent)
-                }
+                }*/
                 //A应用唤醒部分代码逻辑
                 /*val intent2 = Intent(Intent.ACTION_MAIN)
                 */
@@ -86,6 +118,7 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
 
             binding.btnDatabinding2 -> {
                 //startActivity(Intent(this, TemperatureActivity::class.java))
+                viewModel.test()
             }
 
             binding.btnCustomView -> {
@@ -95,6 +128,10 @@ class MainActivity : BaseVMActivity<ActivityMainBinding, MainViewModel>(), View.
             }
 
         }
+
+
+
+
     }
 
     fun test(time1: Long, time2: Long): Int {

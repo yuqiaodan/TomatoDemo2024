@@ -37,6 +37,11 @@ class PagerBanner @JvmOverloads constructor(
     }
 
     private fun initEvent() {
+
+
+
+
+
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
